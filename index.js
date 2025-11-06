@@ -50,16 +50,23 @@ app.post('/books', (req, res) => {
     };
     books.push(newBook);
     return res.status(201).json({
-        message: 'Book creared successfuly',
+        message: 'Book created successfuly',
         id: newBook.id
     });
 });
 // Delete a book by ID
 app.delete('/books/:id', (req, res) => {
     const bookId = parseInt(req.params.id);
+    if(isNaN(bookId)){
+        return res.status(400).json({
+            error: 'ID must be of type number'
+        });
+    }
     const bookIndex = books.findIndex(b => b.id === bookId);
-    if(bookIndex === -1){
-        return res.status(404).json({ message: 'Book not found'});
+    if(bookIndex < 0){
+        return res.status(404).json({ 
+            error: `Book with ID ${bookId} does not exist`
+        });
     }
     books.splice(bookIndex, 1);
     return res.status(204).send();
