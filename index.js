@@ -10,17 +10,27 @@ const books = [
 ];
 
 app.use(express.json());
+// Get all books
 app.get('/books', (req, res) => {
     return res.json(books);
 });
+// Get a book by ID
 app.get('/books/:id', (req, res) => {
     const bookId = parseInt(req.params.id);
+    if(isNaN(bookId)){
+        return res.status(400).json({
+            error: 'ID must be number'
+        });
+    }
     const book = books.find(b => b.id === bookId);
-    if (!book){
-        return res.status(404).json({ message: 'Book not found'});
+    if(!book){
+        return res.status(404).json({ 
+            error: `Book with ID ${bookId} does not exist`
+        });
     }
     return res.json(book);
 });
+// Add a new book
 app.post('/books', (req, res) => {
     const {title, author} = req.body;
     const newBook = {
@@ -31,6 +41,7 @@ app.post('/books', (req, res) => {
     books.push(newBook);
     return res.status(201).json(newBook);
 });
+// Delete a book by ID
 app.delete('/books/:id', (req, res) => {
     const bookId = parseInt(req.params.id);
     const bookIndex = books.findIndex(b => b.id === bookId);
