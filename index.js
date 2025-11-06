@@ -33,13 +33,26 @@ app.get('/books/:id', (req, res) => {
 // Add a new book
 app.post('/books', (req, res) => {
     const {title, author} = req.body;
+    if(!title || title.trim() === ''){
+        return res.status(400).json({
+            error: 'Title is required'
+        });
+    }
+    if(!author|| author.trim() === ''){
+        return res.status(400).json({
+            error: 'Author is required'
+        });
+    }
     const newBook = {
         id: books.length + 1,
         title,
         author
     };
     books.push(newBook);
-    return res.status(201).json(newBook);
+    return res.status(201).json({
+        message: 'Book creared successfuly',
+        id: newBook.id
+    });
 });
 // Delete a book by ID
 app.delete('/books/:id', (req, res) => {
