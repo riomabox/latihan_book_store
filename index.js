@@ -1,4 +1,5 @@
 const express = require('express');
+const fs = require('node:fs');
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -9,7 +10,17 @@ const books = [
     { id: 3, title: '1984', author: 'George Orwell' },
 ];
 
+// Middleware
 app.use(express.json());
+app.use((req, res, next) => {
+    // Create log message
+    const log = `${Date.now()} ${req.method} ${req.path}\n`;
+    // Write to file
+    fs.appendFileSync('logs.txt', log, 'utf8');
+    // Continue to next middleware/route
+    next();
+});
+
 // Get all books
 app.get('/books', (req, res) => {
     return res.json(books);
