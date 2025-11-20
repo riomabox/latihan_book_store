@@ -10,19 +10,34 @@ const books = [
     { id: 3, title: '1984', author: 'George Orwell' },
 ];
 
-// Middleware
-app.use(express.json());
-app.use((req, res, next) => {
+// Named middleware functions
+const loggerMiddleware = (req, res, next) => {
     // Create log message
     const log = `${Date.now()} ${req.method} ${req.path}\n`;
     // Write to file
     fs.appendFileSync('logs.txt', log, 'utf8');
     // Continue to next middleware/route
     next();
+}
+
+const customMiddleware = (req, res, next) => {
+    console.log('I am a custom middleware');
+    next();
+}
+
+// Middleware
+app.use(express.json());
+// Global Middleware
+app.use(loggerMiddleware);
+// Path-specific middleware
+app.use('/books', (req, res, next) => {
+    console.log('Books-related request');
+    next();
 });
 
+// Route-level Middleware
 // Get all books
-app.get('/books', (req, res) => {
+app.get('/books', customMiddleware, (req, res) => {
     return res.json(books);
 });
 // Get a book by ID
