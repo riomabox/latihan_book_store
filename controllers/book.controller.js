@@ -1,7 +1,10 @@
 const { books } = require('../models/book');
+const db = require('../db');
+const { booksTable } = require('../models');
 
-exports.getAllBooks = (req, res) => {
-	res.json(books);
+exports.getAllBooks = async (req, res) => {
+    const books = await db.select().from(booksTable);
+	return res.json(books);
 }
 
 exports.getBookById = (req, res) => {
