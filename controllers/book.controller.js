@@ -1,7 +1,7 @@
 const { books } = require('../models/book');
 const db = require('../db');
 const { booksTable } = require('../models');
-const { eq, ilike } = require('drizzle-orm');
+const { eq, ilike, sql } = require('drizzle-orm');
 
 exports.getAllBooks = async (req, res) => {
     const search = req.query.search;
@@ -10,7 +10,8 @@ exports.getAllBooks = async (req, res) => {
             .select()
             .from(booksTable)
             .where(
-                ilike(booksTable.title, `%${search}%`)
+                sql`to_tsvector('indonesian', ${booksTable.title}) 
+                    @@ to_tsquery('indonesian', ${search})`
             );
         return res.json(books);
     }
