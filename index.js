@@ -1,6 +1,7 @@
 const express = require('express');
 const { loggerMiddleware } = require('./middlewares/logger');
 const bookRouter = require('./routes/book.routes');
+const authorRouter = require('./routes/author.routes');
 require('dotenv/config');
 
 const app = express();
@@ -12,6 +13,7 @@ app.use(express.json());
 app.use(loggerMiddleware);
 
 // Routes
+app.use('/authors', authorRouter);
 app.use('/books', bookRouter);
 
 // Start server
